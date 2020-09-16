@@ -1,13 +1,5 @@
 ﻿using CrmBl.Model;
 using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CrmUi
@@ -21,14 +13,14 @@ namespace CrmUi
         }
         public SellerForm(Seller seller) : this()
         {
-            Seller = seller;
+            Seller = seller ?? new Seller();
             textBox1.Text = seller.Name;
-        }    
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var s = Seller ?? new Seller();
-            s.Name = textBox1.Text;
+            Seller = Seller ?? new Seller();
+            Seller.Name = textBox1.Text;
             Close();
         }
     }

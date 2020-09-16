@@ -1,12 +1,6 @@
 ﻿using CrmBl.Model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CrmUi
@@ -22,26 +16,40 @@ namespace CrmUi
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var labels = new List<Label>();
+            var cashBoxes = new List<CashBoxView>();
 
-            foreach (var cashDesk in model.CashDesks)
+            for (int i = 0; i < model.CashDesks.Count; i++)
             {
-                var label = new Label();
-                var numericUpDown = new NumericUpDown();
-
-                this.label1.AutoSize = true;
-                this.label1.Location = new System.Drawing.Point(13, 13);
-                this.label1.Name = "label1";
-                this.label1.Size = new System.Drawing.Size(35, 13);
-                this.label1.TabIndex = 1;
-                this.label1.Text = "label1";
- 
-                this.numericUpDown1.Location = new System.Drawing.Point(76, 11);
-                this.numericUpDown1.Name = "numericUpDown1";
-                this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
-                this.numericUpDown1.TabIndex = 2;
+                var box = new CashBoxView(model.CashDesks[i], i, 10, 26 * i);
+                cashBoxes.Add(box);
+                Controls.Add(box.CashDeskName);
+                Controls.Add(box.Price);
+                Controls.Add(box.QueueLenght);
+                Controls.Add(box.LeaveCustomersCount);
             }
+            model.Start();
 
+        }
+
+        private void ModelForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            model.Stop();
+        }
+
+        private void ModelForm_Load(object sender, EventArgs e)
+        {
+            numericUpDown1.Value = model.CustomerSpeed;
+            numericUpDown2.Value = model.CashDeskSpeed;
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            model.CustomerSpeed = (int)numericUpDown1.Value;
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            model.CashDeskSpeed = (int)numericUpDown2.Value;
         }
     }
 }
