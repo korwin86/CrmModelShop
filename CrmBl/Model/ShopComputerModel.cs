@@ -7,8 +7,9 @@ namespace CrmBl.Model
 {
     public class ShopComputerModel
     {
+        CancellationTokenSource source = new CancellationTokenSource();
         Generator Generator = new Generator();
-        bool isWorking = false;
+        List<Task> tasks = new List<Task>();
         public List<CashDesk> CashDesks { get; set; } = new List<CashDesk>();
         public List<Cart> Carts { get; set; } = new List<Cart>();
         public List<Check> Checks { get; set; } = new List<Check>();
@@ -29,41 +30,41 @@ namespace CrmBl.Model
 
             for (int i = 0; i < 3; i++)
             {
-                CashDesks.Add(new CashDesk(CashDesks.Count, Sellers.Dequeue()));
+                CashDesks.Add(new CashDesk(CashDesks.Count, Sellers.Dequeue(), null));
             }
 
         }
         public void Start()
         {
-            isWorking = true;
-            Task.Run(() => CreateCarts(10, CustomerSpeed));
-            var cashDeskTasks = CashDesks.Select(c => new Task(() => CashDeskWork(c, CashDeskSpeed)));
-            foreach (var task in cashDeskTasks)
+            CancellationToken token = source.Token;
+            tasks.Add(new Task(() => CreateCarts(10, token)));
+            tasks.AddRange(CashDesks.Select(c => new Task(() => CashDeskWork(c, token))));
+            foreach (var task in tasks)
             {
                 task.Start();
             }
         }
         public void Stop()
         {
-            isWorking = false;
+              source.Cancel();
         }
 
-        private void CashDeskWork(CashDesk cashDesk, int sleep)
+        private void CashDeskWork(CashDesk cashDesk, CancellationToken token)
         {
-            while (isWorking)
+            while (!token.IsCancellationRequested)
             {
                 if (cashDesk.Count > 0)
                 {
                     cashDesk.Dequeu();
-                    Thread.Sleep(sleep);
+                    Thread.Sleep(CashDeskSpeed);
                 }
             }
             
         }
 
-        private void CreateCarts(int customerCounts, int sleep)
+        private void CreateCarts(int customerCounts,CancellationToken token)
         {
-            while (isWorking)
+            while (!token.IsCancellationRequested)
             {
                 var customers = Generator.GetNewCustomers(customerCounts);
                 foreach (var customer in customers)
@@ -76,7 +77,7 @@ namespace CrmBl.Model
                     var cash = CashDesks[Generator.rnd.Next(CashDesks.Count)];
                     cash.Enqueue(cart);
                 }
-                Thread.Sleep(sleep);
+                Thread.Sleep(CustomerSpeed);
             }
         }
     }

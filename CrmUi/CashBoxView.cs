@@ -25,17 +25,17 @@ namespace CrmUi
             CashDeskName.Name = "label" + number;
             CashDeskName.Size = new System.Drawing.Size(35, 13);
             CashDeskName.TabIndex = number;
-            CashDeskName.Text =  cashDesk.ToString();
+            CashDeskName.Text = cashDesk.ToString();
 
             Price.Location = new System.Drawing.Point(x + 70, y);
-            Price.Name = "numericUpDown1"+number;
+            Price.Name = "numericUpDown1" + number;
             Price.Size = new System.Drawing.Size(120, 20);
             Price.TabIndex = number;
             Price.Maximum = 10000000000000;
 
             QueueLenght.Location = new System.Drawing.Point(x + 250, y);
             QueueLenght.Maximum = cashDesk.MaxQueueLenght;
-            QueueLenght.Name = "progressBar"+number;
+            QueueLenght.Name = "progressBar" + number;
             QueueLenght.Size = new System.Drawing.Size(100, 23);
             QueueLenght.TabIndex = number;
             QueueLenght.Value = 0;
@@ -52,8 +52,9 @@ namespace CrmUi
 
         private void CashDesk_CheckClosed(object sender, Check e)
         {
-            Price.Invoke((Action)delegate 
-            { 
+
+            Price.Invoke((Action)delegate
+            {
                 Price.Value += e.Price;
                 QueueLenght.Value = cashDesk.Count;
                 LeaveCustomersCount.Text = cashDesk.ExitCustomer.ToString();

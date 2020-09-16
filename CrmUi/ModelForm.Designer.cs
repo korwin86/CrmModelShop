@@ -123,6 +123,7 @@
             this.Controls.Add(this.button1);
             this.Name = "ModelForm";
             this.Text = "ModelForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModelForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ModelForm_FormClosed);
             this.Load += new System.EventHandler(this.ModelForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
